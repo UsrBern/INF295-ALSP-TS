@@ -60,12 +60,10 @@ int greedyAlgorithm(std::vector<Plane>& planes) {
                     if (Xj + Sij < planes[j].L) { // if delaying j does not violate its latest time window limit (L), delay j
                         landingTimes[planes[j].planeID] = Xj + Sij;
                         planes[j].assignedLandingTime = Xj + Sij;
-                        totalPenalization += calculatePenalization(Xj + Sij, planes[j].T, planes[j].g, planes[j].h);
                     }
                     else if (Xi + Sij < planes[i].E) { // if advancing i does not violate its earliest time window limit (E), advance i
                         landingTimes[planes[i].planeID] = Xi + Sij;
                         planes[i].assignedLandingTime = Xi + Sij;
-                        totalPenalization += calculatePenalization(Xi + Sij, planes[i].T, planes[i].g, planes[i].h);
                     }
                     else { // else this means that the separation constraint cannot be respected
                         std::cout << "Error: separation constraint cannot be respected for planes " << planes[i].planeID << " and " << planes[j].planeID << std::endl;
@@ -76,12 +74,10 @@ int greedyAlgorithm(std::vector<Plane>& planes) {
                     if (Xi + Sij < planes[i].E) { // if advancing i does not violate its earliest time window limit (E), advance i
                         landingTimes[planes[i].planeID] = Xi + Sij;
                         planes[i].assignedLandingTime = Xi + Sij;
-                        totalPenalization += calculatePenalization(Xi + Sij, planes[i].T, planes[i].g, planes[i].h);
                     }
                     else if (Xj + Sij < planes[j].L) { // if delaying j does not violate its latest time window limit (L), delay j
                         landingTimes[planes[j].planeID] = Xj + Sij;
                         planes[j].assignedLandingTime = Xj + Sij;
-                        totalPenalization += calculatePenalization(Xj + Sij, planes[j].T, planes[j].g, planes[j].h);
                     }
                     else { // else this means that the separation constraint cannot be respected
                         std::cout << "Error: separation constraint cannot be respected for planes " << planes[i].planeID << " and " << planes[j].planeID << std::endl;
@@ -93,6 +89,21 @@ int greedyAlgorithm(std::vector<Plane>& planes) {
 
         }
     }
+
+    // Calculate the total penalization by iterating through the planes
+    for (int i = 0; i < numPlanes; i++) {
+        int Xi = landingTimes[planes[i].planeID];
+        int Ti = planes[i].T;
+        int gi = planes[i].g;
+        int hi = planes[i].h;
+        
+        // Calculate penalization for plane i and add it to the total penalization
+        totalPenalization += calculatePenalization(Xi, Ti, gi, hi);
+    }
+
+    // Return the total penalization
+    return totalPenalization;
+
     
 }
 
