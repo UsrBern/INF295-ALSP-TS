@@ -5,60 +5,67 @@
 #include <chrono>
 #include "../include/greedy.hpp"
 
+void printSolution(const std::vector<Plane>& planes, int totalPenalization, double computationTime) {
+    std::cout << "______________________" << std::endl;
+    std::cout << "| Plane |";
+    for (const Plane& plane : planes) {
+        std::cout << " " << std::setw(6) << plane.planeID << " |";
+    }
+    std::cout << "\n| Time  |";
+    for (const Plane& plane : planes) {
+        std::cout << " " << std::setw(6) << plane.assignedLandingTime << " |";
+    }
+    std::cout << "\n----------------------" << std::endl;
+
+    std::cout << "Total Cost: " << totalPenalization << std::endl;
+    std::cout << "Computation Time: " << computationTime << " ms" << std::endl;
+}
+
 
 int main() {
+    // Read input file
     std::ifstream inputFile("../instances/airland1.txt");
-    if (!inputFile) {
-        std::cerr << "Error: Failed to open instance file." << std::endl;
+    if (!inputFile.is_open()) {
+        std::cout << "Error: could not open input file" << std::endl;
         return 1;
     }
 
+    // Read number of planes
     int p;
     inputFile >> p;
 
-    std::vector<int> E(p), T(p), L(p), g(p), h(p);
-    std::vector<std::vector<int>> S(p, std::vector<int>(p));
-
+    // Read planes
+    std::vector<Plane> planes;
     for (int i = 0; i < p; i++) {
-        inputFile >> E[i] >> T[i] >> L[i] >> g[i] >> h[i];
+        int E, T, L;
+        float g, h;
+        inputFile >> E >> T >> L >> g >> h;
+
+        std::vector<int> S;
         for (int j = 0; j < p; j++) {
-            inputFile >> S[i][j];
-        }
+            int s;
+            inputFile >> s;
+            S.push_back(s);
+        }        
+
+        planes.push_back(Plane(E, T, L, g, h, S, i+1));
+    }
+    for (size_t i = 0; i < planes.size(); i++) {
+        planes[i].print();
     }
 
+    // Close input file
     inputFile.close();
 
+    // Create a solution vector and compute the initial solution
     std::vector<int> solution(p, -1);
+    auto start = std::chrono::high_resolution_clock::now();
+    greedyAlgorithm(planes);
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsedTime = end - start;
 
-    // Measure computation time
-    auto start_time = std::chrono::high_resolution_clock::now();
-
-    greedyAlgorithm(solution, E, T, L, g, h, S);
-
-    auto end_time = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
-
-    // Print the solution table
-    std::cout << "|\tPlane\t|";
-    for (int i = 0; i < p; i++) {
-        std::cout << "\t" << i + 1 << "\t|";
-    }
-    std::cout << std::endl;
-
-    std::cout << "|\tTime\t|";
-    for (int i = 0; i < p; i++) {
-        std::cout << "\t" << solution[i] << "\t|";
-    }
-    std::cout << std::endl;
-
-    int totalPenalization = 0;
-    for (int i = 0; i < p; i++) {
-        totalPenalization += calculatePenalization(solution[i], T[i], g[i], h[i]);
-    }
-
-    // Print the total penalization and computation time
-    std::cout << "Total Cost: " << totalPenalization << std::endl;
-    std::cout << "Computation Time: " << duration.count() << " ms" << std::endl;
+    // Print solution
+    printSolution(planes, , elapsedTime.count() * 1000);
 
     return 0;
 }

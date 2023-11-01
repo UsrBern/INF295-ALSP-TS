@@ -1,3 +1,6 @@
 # INF295-ALSP-TS
 
-* Compliacion: `g++ -std=c++20 -o ALSP src/main.cpp`
+* Compliacion
+
+Correr `g++ -std=c++20 -o ALSP main.cpp` en carpeta src
+Luego `./ALSP` en src

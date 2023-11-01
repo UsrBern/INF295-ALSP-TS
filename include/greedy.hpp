@@ -3,6 +3,7 @@
 #include <array>
 #include <algorithm>
 #include <limits>
+#include "../include/plane.hpp"
 
 const int VeryBigNumber = 1000;  // A very large number to use in separation constraints
 
@@ -17,20 +18,25 @@ int calculatePenalization(int landingTime, int Ti, int gi, int hi) {
 }
 
 // Greedy algorithm to generate the initial solution
-void greedyAlgorithm(std::vector<int>& solution, const std::vector<int>& E, const std::vector<int>& T, const std::vector<int>& L, const std::vector<int>& g, const std::vector<int>& h, const std::vector<std::vector<int>>& S) {
-    for (size_t i = 0; i < solution.size(); i++) {
-        int minPenalization = std::numeric_limits<int>::max();
-        int bestLandingTime = -1;
+void greedyAlgorithm(std::vector<Plane>& planes) {
+    for (size_t i = 0; i < planes.size(); i++) {
+        int bestLandingTime = planes[i].T;
+        int minPenalization = calculatePenalization(planes[i].T, planes[i].T, planes[i].g, planes[i].h);
 
-        for (int landingTime = E[i]; landingTime <= L[i]; landingTime++) {
+        for (int landingTime = planes[i].E; landingTime <= planes[i].L; landingTime++) {
+            // Skip the ideal landing time (already initialized)
+            if (landingTime == planes[i].T) {
+                continue;
+            }
+
             // Calculate penalization for this landing time
-            int penalization = calculatePenalization(landingTime, T[i], g[i], h[i]);
+            int penalization = calculatePenalization(landingTime, planes[i].T, planes[i].g, planes[i].h);
 
             // Check separation constraints
             bool validLanding = true;
-            for (size_t j = 0; j < solution.size(); j++) {
+            for (size_t j = 0; j < planes.size(); j++) {
                 if (i != j) {
-                    if (landingTime < solution[j] + S[i][j] || landingTime > solution[j] + S[j][i]) {
+                    if (landingTime < planes[j].assignedLandingTime + planes[i].S[j] || landingTime > planes[j].assignedLandingTime + planes[j].S[i]) {
                         validLanding = false;
                         break;
                     }
@@ -45,6 +51,6 @@ void greedyAlgorithm(std::vector<int>& solution, const std::vector<int>& E, cons
         }
 
         // Assign the best landing time for plane i
-        solution[i] = bestLandingTime;
+        planes[i].assignedLandingTime = bestLandingTime;
     }
 }
