@@ -39,19 +39,17 @@ int main() {
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
 
     // Print the solution table
-    std::cout << "______________________" << std::endl;
-    std::cout << "| Plane |";
+    std::cout << "|\tPlane\t|";
     for (int i = 0; i < p; i++) {
-        std::cout << " " << i + 1 << " |";
+        std::cout << "\t" << i + 1 << "\t|";
     }
     std::cout << std::endl;
 
-    std::cout << "| Time  |";
+    std::cout << "|\tTime\t|";
     for (int i = 0; i < p; i++) {
-        std::cout << " " << solution[i] << " |";
+        std::cout << "\t" << solution[i] << "\t|";
     }
     std::cout << std::endl;
-    std::cout << "--------------------------\n";
 
     int totalPenalization = 0;
     for (int i = 0; i < p; i++) {
