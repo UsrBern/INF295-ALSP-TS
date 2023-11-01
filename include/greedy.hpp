@@ -27,14 +27,9 @@ int greedyAlgorithm(std::vector<Plane>& planes) {
         return a.T < b.T;
     });
 
-    // Create a vector to store the landing times
-    // Representation: A vector storing the landing time for each plane, such that their index in the vector is their ID
-    std::vector<int> landingTimes(numPlanes);
-
     // Initialize landing times vector with the planes' T values
     for (int i = 0; i < numPlanes; i++) {
         int id = planes[i].planeID;
-        landingTimes[id] = planes[i].T;
         planes[i].assignedLandingTime = planes[i].T;
     }
 
@@ -50,19 +45,17 @@ int greedyAlgorithm(std::vector<Plane>& planes) {
             }
             
             int Sij = planes[i].S[j];
-            int Xi = landingTimes[planes[i].planeID];
-            int Xj = landingTimes[planes[j].planeID];
+            int Xi = planes[i].assignedLandingTime;
+            int Xj = planes[j].assignedLandingTime;
 
             // If the separation is not respected, alter landing times to respect it
             if (!(Xj >= Xi + Sij)) {
                 separationViolated = true;
                 if (planes[j].h <= planes[i].g){ // if penalization for delaying j is smaller than penalization for advancing i
                     if (Xj + Sij < planes[j].L) { // if delaying j does not violate its latest time window limit (L), delay j
-                        landingTimes[planes[j].planeID] = Xj + Sij;
                         planes[j].assignedLandingTime = Xj + Sij;
                     }
                     else if (Xi + Sij < planes[i].E) { // if advancing i does not violate its earliest time window limit (E), advance i
-                        landingTimes[planes[i].planeID] = Xi + Sij;
                         planes[i].assignedLandingTime = Xi + Sij;
                     }
                     else { // else this means that the separation constraint cannot be respected
@@ -72,11 +65,9 @@ int greedyAlgorithm(std::vector<Plane>& planes) {
                 }
                 else { // else penalization for advancing i is smaller than penalization for delaying j
                     if (Xi + Sij < planes[i].E) { // if advancing i does not violate its earliest time window limit (E), advance i
-                        landingTimes[planes[i].planeID] = Xi + Sij;
                         planes[i].assignedLandingTime = Xi + Sij;
                     }
                     else if (Xj + Sij < planes[j].L) { // if delaying j does not violate its latest time window limit (L), delay j
-                        landingTimes[planes[j].planeID] = Xj + Sij;
                         planes[j].assignedLandingTime = Xj + Sij;
                     }
                     else { // else this means that the separation constraint cannot be respected
@@ -85,14 +76,12 @@ int greedyAlgorithm(std::vector<Plane>& planes) {
                     }
                 }
             }
-
-
         }
     }
 
     // Calculate the total penalization by iterating through the planes
     for (int i = 0; i < numPlanes; i++) {
-        int Xi = landingTimes[planes[i].planeID];
+        int Xi = planes[i].assignedLandingTime;
         int Ti = planes[i].T;
         int gi = planes[i].g;
         int hi = planes[i].h;
