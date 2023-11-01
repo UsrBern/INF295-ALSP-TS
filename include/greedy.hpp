@@ -20,46 +20,77 @@ int calculatePenalization(int landingTime, int Ti, int gi, int hi) {
 // Greedy algorithm to generate the initial solution
 int greedyAlgorithm(std::vector<Plane>& planes) {
     int totalPenalization = 0;
+    int numPlanes = planes.size();
 
-    for (size_t i = 0; i < planes.size(); i++) {
-        int bestLandingTime = planes[i].T;
-        int minPenalization = calculatePenalization(planes[i].T, planes[i].T, planes[i].g, planes[i].h);
+    // Sort the planes vector by T
+    std::sort(planes.begin(), planes.end(), [](const Plane& a, const Plane& b) {
+        return a.T < b.T;
+    });
 
-        for (int landingTime = planes[i].E; landingTime <= planes[i].L; landingTime++) {
-            // Skip the ideal landing time (already initialized)
-            if (landingTime == planes[i].T) {
-                continue;
-            }
+    // Create a vector to store the landing times
+    // Representation: A vector storing the landing time for each plane, such that their index in the vector is their ID
+    std::vector<int> landingTimes(numPlanes);
 
-            // Calculate penalization for this landing time
-            int penalization = calculatePenalization(landingTime, planes[i].T, planes[i].g, planes[i].h);
+    // Initialize landing times vector with the planes' T values
+    for (int i = 0; i < numPlanes; i++) {
+        int id = planes[i].planeID;
+        landingTimes[id] = planes[i].T;
+        planes[i].assignedLandingTime = planes[i].T;
+    }
 
-            // Check separation constraints
-            bool validLanding = true;
-            for (size_t j = 0; j < planes.size(); j++) {
-                if (i != j) {
-                    if (landingTime < planes[j].assignedLandingTime + planes[i].S[j] || landingTime > planes[j].assignedLandingTime + planes[j].S[i]) {
-                        validLanding = false;
-                        break;
-                    }
+    // Separation of plane i and j is plane[i].S[j]
+    // Iterate over all pairs of planes to ensure separation is respected
+    for (int i = 0; i < numPlanes; i++){
+        int j = i + 1;
+        if (j == numPlanes) { // if we have reached the last plane in the sequence
+            break;
+        }
+        
+        int Sij = planes[i].S[j];
+        int Xi = landingTimes[planes[i].planeID];
+        int Xj = landingTimes[planes[j].planeID];
+
+        // If the separation is not respected, alter landing times to respect it
+        if (!(Xj >= Xi + Sij)) {
+            if (planes[j].h <= planes[i].g){ // if penalization for delaying j is smaller than penalization for advancing i
+                if (Xj + Sij < planes[j].L) { // if delaying j does not violate its latest time window limit (L), delay j
+                    landingTimes[planes[j].planeID] = Xj + Sij;
+                    planes[j].assignedLandingTime = Xj + Sij;
+                    totalPenalization += calculatePenalization(Xj + Sij, planes[j].T, planes[j].g, planes[j].h);
+                }
+                else if (Xi + Sij < planes[i].E) { // if advancing i does not violate its earliest time window limit (E), advance i
+                    landingTimes[planes[i].planeID] = Xi + Sij;
+                    planes[i].assignedLandingTime = Xi + Sij;
+                    totalPenalization += calculatePenalization(Xi + Sij, planes[i].T, planes[i].g, planes[i].h);
+                }
+                else { // else this means that the separation constraint cannot be respected
+                    std::cout << "Error: separation constraint cannot be respected for planes " << planes[i].planeID << " and " << planes[j].planeID << std::endl;
+                    return -1;
                 }
             }
-
-            // Check if this landing time minimizes the penalization and satisfies separation constraints
-            if (penalization < minPenalization && validLanding) {
-                minPenalization = penalization;
-                bestLandingTime = landingTime;
+            else { // else penalization for advancing i is smaller than penalization for delaying j
+                if (Xi + Sij < planes[i].E) { // if advancing i does not violate its earliest time window limit (E), advance i
+                    landingTimes[planes[i].planeID] = Xi + Sij;
+                    planes[i].assignedLandingTime = Xi + Sij;
+                    totalPenalization += calculatePenalization(Xi + Sij, planes[i].T, planes[i].g, planes[i].h);
+                }
+                else if (Xj + Sij < planes[j].L) { // if delaying j does not violate its latest time window limit (L), delay j
+                    landingTimes[planes[j].planeID] = Xj + Sij;
+                    planes[j].assignedLandingTime = Xj + Sij;
+                    totalPenalization += calculatePenalization(Xj + Sij, planes[j].T, planes[j].g, planes[j].h);
+                }
+                else { // else this means that the separation constraint cannot be respected
+                    std::cout << "Error: separation constraint cannot be respected for planes " << planes[i].planeID << " and " << planes[j].planeID << std::endl;
+                    return -1;
+                }
             }
         }
 
-        // Assign the best landing time for plane i
-        planes[i].assignedLandingTime = bestLandingTime;
 
-        // Add the penalization to the total penalization
-        totalPenalization += minPenalization;
     }
-
-    // Return the total penalization
-    return totalPenalization;
+    
 }
+
+
+
 
