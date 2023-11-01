@@ -18,7 +18,9 @@ int calculatePenalization(int landingTime, int Ti, int gi, int hi) {
 }
 
 // Greedy algorithm to generate the initial solution
-void greedyAlgorithm(std::vector<Plane>& planes) {
+int greedyAlgorithm(std::vector<Plane>& planes) {
+    int totalPenalization = 0;
+
     for (size_t i = 0; i < planes.size(); i++) {
         int bestLandingTime = planes[i].T;
         int minPenalization = calculatePenalization(planes[i].T, planes[i].T, planes[i].g, planes[i].h);
@@ -52,5 +54,12 @@ void greedyAlgorithm(std::vector<Plane>& planes) {
 
         // Assign the best landing time for plane i
         planes[i].assignedLandingTime = bestLandingTime;
+
+        // Add the penalization to the total penalization
+        totalPenalization += minPenalization;
     }
+
+    // Return the total penalization
+    return totalPenalization;
 }
+

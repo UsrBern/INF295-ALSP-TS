@@ -1,25 +1,36 @@
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <fstream>
 #include <sstream>
 #include <chrono>
+#include <algorithm>
 #include "../include/greedy.hpp"
 
+#include <algorithm>
+
 void printSolution(const std::vector<Plane>& planes, int totalPenalization, double computationTime) {
-    std::cout << "______________________" << std::endl;
+    // Sort the planes vector by assignedLandingTime
+    std::vector<Plane> sortedPlanes = planes;
+    std::sort(sortedPlanes.begin(), sortedPlanes.end(), [](const Plane& a, const Plane& b) {
+        return a.assignedLandingTime < b.assignedLandingTime;
+    });
+
     std::cout << "| Plane |";
-    for (const Plane& plane : planes) {
+    for (const Plane& plane : sortedPlanes) {
         std::cout << " " << std::setw(6) << plane.planeID << " |";
     }
     std::cout << "\n| Time  |";
-    for (const Plane& plane : planes) {
+    for (const Plane& plane : sortedPlanes) {
         std::cout << " " << std::setw(6) << plane.assignedLandingTime << " |";
     }
-    std::cout << "\n----------------------" << std::endl;
+    std::cout << std::endl;
+    std::cout << std::endl;
 
     std::cout << "Total Cost: " << totalPenalization << std::endl;
     std::cout << "Computation Time: " << computationTime << " ms" << std::endl;
 }
+
 
 
 int main() {
@@ -50,9 +61,6 @@ int main() {
 
         planes.push_back(Plane(E, T, L, g, h, S, i+1));
     }
-    for (size_t i = 0; i < planes.size(); i++) {
-        planes[i].print();
-    }
 
     // Close input file
     inputFile.close();
@@ -60,12 +68,12 @@ int main() {
     // Create a solution vector and compute the initial solution
     std::vector<int> solution(p, -1);
     auto start = std::chrono::high_resolution_clock::now();
-    greedyAlgorithm(planes);
+    int totalPenalization = greedyAlgorithm(planes);
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsedTime = end - start;
 
     // Print solution
-    printSolution(planes, , elapsedTime.count() * 1000);
+    printSolution(planes, totalPenalization, elapsedTime.count() * 1000);
 
     return 0;
 }
