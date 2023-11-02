@@ -5,8 +5,6 @@
 #include <limits>
 #include "../include/plane.hpp"
 
-const int VeryBigNumber = 1000;  // A very large number to use in separation constraints
-
 // Function to calculate the penalization for a given plane's landing time
 int calculatePenalization(int landingTime, int Ti, int gi, int hi) {
     if (landingTime < Ti) {

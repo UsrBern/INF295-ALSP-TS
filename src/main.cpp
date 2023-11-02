@@ -65,6 +65,9 @@ int main() {
     // Close input file
     inputFile.close();
 
+    // Create a Runway object
+    Runway runway(planes);
+
     // Create a solution vector and compute the initial solution
     std::vector<int> solution(p, -1);
     auto start = std::chrono::high_resolution_clock::now();
