@@ -10,7 +10,7 @@
 #include <algorithm>
 
 void printSolution(const std::vector<Plane>& planes, int totalPenalization, double computationTime) {
-    // Sort the planes vector by assignedLandingTime
+    // Sort the planes vector by their landing time
     std::vector<Plane> sortedPlanes = planes;
     std::sort(sortedPlanes.begin(), sortedPlanes.end(), [](const Plane& a, const Plane& b) {
         return a.assignedLandingTime < b.assignedLandingTime;
@@ -76,6 +76,11 @@ int main() {
     std::chrono::duration<double> elapsedTime = end - start;
 
     // Print solution
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Total Cost: " << totalPenalization << std::endl;
+    std::cout << "Computation Time: " << computationTime << " ms" << std::endl;
 
     return 0;
 }

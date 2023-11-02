@@ -87,10 +87,26 @@ public:
     }
 
     void printRunwaySchedule() const {
-        std::cout << "Runway schedule:" << std::endl;
-        for (size_t i = 0; i < X.size(); i++) {
-            std::cout << "X" << i + 1 << ": " << X[i] << " ";
+        // Extract landing times vector (X) from runway object
+        std::vector<int> X = this->X;
+
+        // Sort landing times vector (X), preserve their indices
+        std::vector<int> sortedIndices(X.size());
+        for (int i = 0; i < X.size(); i++) {
+            sortedIndices[i] = i;
         }
-        std::cout << std::endl;
+        std::sort(sortedIndices.begin(), sortedIndices.end(), [&X](int i1, int i2) {
+            return X[i1] < X[i2];
+        });
+
+        // Print runway schedule
+        std::cout << "| Plane |";
+        for (int i = 0; i < X.size(); i++) {
+            std::cout << " " << std::setw(6) << sortedIndices[i+1] << " |";
+        }
+        std::cout << "\n| Time  |";
+        for (int i = 0; i < X.size(); i++) {
+            std::cout << " " << std::setw(6) << X[i] << " |";
+        }
     }
 };
