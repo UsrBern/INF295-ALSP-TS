@@ -6,6 +6,7 @@
 #include <chrono>
 #include <algorithm>
 #include <string>
+#include <regex>
 #include "../include/greedy.hpp"
 
 #include <algorithm>
@@ -37,13 +38,22 @@ void printSolution(const std::vector<Plane>& planes, int totalPenalization, doub
 int main() {
     // Read input file
     std::string fileName;
-    std::cout << "Enter the name of the input file (ex: airland1.txt): ";
-    std::cin >> fileName;
-    std::ifstream inputFile("../instances/" + fileName);
-    if (!inputFile.is_open()) {
-        std::cout << "Error: could not open input file" << std::endl;
-        return 1;
-    }
+    std::regex fileNamePattern("airland([1-9]|1[0-3])\\.txt$");
+    std::ifstream inputFile;
+
+    do {
+        std::cout << "Enter the name of the input file (ex: airland1.txt): ";
+        std::cin >> fileName;
+
+        if (!std::regex_match(fileName, fileNamePattern)) {
+            std::cout << "Error: Invalid input file name. Try again." << std::endl;
+        } else {
+            inputFile.open("../instances/" + fileName);
+            if (!inputFile.is_open()) {
+                std::cout << "Error: Could not open file. Try again." << std::endl;
+            }
+        }
+    } while (!inputFile.is_open());
 
     // Read number of planes
     int p;

@@ -77,7 +77,7 @@ public:
         }
         std::cout << std::endl;
         for (size_t i = 0; i < S.size(); i++) {
-            std::cout << "S" << i + 1 << ": ";
+            std::cout << "S" << i + 1 << "j: ";
             for (size_t j = 0; j < S[i].size(); j++) {
                 std::cout << S[i][j] << " ";
             }
