@@ -96,9 +96,8 @@ int greedyAlgorithm(std::vector<Plane>& planes) {
 }
 */
 
-int greedyAlgorithm(Runway& runway) {
+int greedyAlgorithm(Runway& runway, int numPlanes) {
     int totalPenalization = 0;
-    int numPlanes = runway.T.size();
 
     // Extract T vector from runway object
     std::vector<int> T = runway.T;
@@ -114,6 +113,7 @@ int greedyAlgorithm(Runway& runway) {
     });
 
     // Initialize landing times vector with the runway's T values
+    runway.X.resize(T.size());
     for (int i = 0; i < numPlanes; i++) {
         int index = sortedIndices[i];
         runway.X[index] = T[index];

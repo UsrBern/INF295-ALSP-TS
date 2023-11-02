@@ -5,6 +5,7 @@
 #include <sstream>
 #include <chrono>
 #include <algorithm>
+#include <string>
 #include "../include/greedy.hpp"
 
 #include <algorithm>
@@ -35,7 +36,10 @@ void printSolution(const std::vector<Plane>& planes, int totalPenalization, doub
 
 int main() {
     // Read input file
-    std::ifstream inputFile("../instances/airland1.txt");
+    std::string fileName;
+    std::cout << "Enter the name of the input file (ex: airland1.txt): ";
+    std::cin >> fileName;
+    std::ifstream inputFile("../instances/" + fileName);
     if (!inputFile.is_open()) {
         std::cout << "Error: could not open input file" << std::endl;
         return 1;
@@ -67,16 +71,22 @@ int main() {
 
     // Create a Runway object
     Runway runway(planes);
-
+    char printAsk;
+    std::cout << "Print the runway parameters? (y/n) ";
+    std::cin >> printAsk;
+    if (printAsk == 'y') {
+        runway.print();
+    }
+    
     // Create a solution vector and compute the initial solution
     std::vector<int> solution(p, -1);
     auto start = std::chrono::high_resolution_clock::now();
-    int totalPenalization = greedyAlgorithm(runway);
+    int totalPenalization = greedyAlgorithm(runway, p);
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsedTime = end - start;
 
     // Print solution
-    std::cout << std::endl;
+    runway.printRunwaySchedule();
     std::cout << std::endl;
 
     std::cout << "Total Cost: " << totalPenalization << std::endl;
