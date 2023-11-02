@@ -85,4 +85,12 @@ public:
         }
         std::cout << std::endl;
     }
+
+    void printRunwaySchedule() const {
+        std::cout << "Runway schedule:" << std::endl;
+        for (size_t i = 0; i < X.size(); i++) {
+            std::cout << "X" << i + 1 << ": " << X[i] << " ";
+        }
+        std::cout << std::endl;
+    }
 };

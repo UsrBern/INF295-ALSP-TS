@@ -71,12 +71,11 @@ int main() {
     // Create a solution vector and compute the initial solution
     std::vector<int> solution(p, -1);
     auto start = std::chrono::high_resolution_clock::now();
-    int totalPenalization = greedyAlgorithm(planes);
+    int totalPenalization = greedyAlgorithm(runway);
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsedTime = end - start;
 
     // Print solution
-    printSolution(planes, totalPenalization, elapsedTime.count() * 1000);
 
     return 0;
 }

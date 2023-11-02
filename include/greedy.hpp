@@ -16,6 +16,7 @@ int calculatePenalization(int landingTime, int Ti, int gi, int hi) {
 }
 
 // Greedy algorithm to generate the initial solution
+/*
 int greedyAlgorithm(std::vector<Plane>& planes) {
     int totalPenalization = 0;
     int numPlanes = planes.size();
@@ -93,7 +94,93 @@ int greedyAlgorithm(std::vector<Plane>& planes) {
 
     
 }
+*/
 
+int greedyAlgorithm(Runway& runway) {
+    int totalPenalization = 0;
+    int numPlanes = runway.T.size();
 
+    // Extract T vector from runway object
+    std::vector<int> T = runway.T;
+
+    // Sort the planes vector by T
+    // Sort the landing times vector (X) by T
+    std::vector<int> sortedIndices(numPlanes);
+    for (int i = 0; i < numPlanes; i++) {
+        sortedIndices[i] = i;
+    }
+    std::sort(sortedIndices.begin(), sortedIndices.end(), [&T](int a, int b) {
+        return T[a] < T[b];
+    });
+
+    // Initialize landing times vector with the runway's T values
+    for (int i = 0; i < numPlanes; i++) {
+        int index = sortedIndices[i];
+        runway.X[index] = T[index];
+    }
+
+    // Separation of plane i and j is plane[i].S[j]
+    // Iterate over all pairs of planes to ensure separation is respected
+    bool separationViolated = true;
+    while (separationViolated) {
+        separationViolated = false;
+        for (int p = 0; p < numPlanes; p++){
+            int i = sortedIndices[p];
+            int j = sortedIndices[p + 1];
+            if (j == numPlanes) { // if we have reached the last plane in the sequence
+                break;
+            }
+            
+            int Sij = runway.S[i][j];
+            int Xi = runway.X[i];
+            int Xj = runway.X[j];
+
+            // If the separation is not respected, alter landing times to respect it
+            if (!(Xj >= Xi + Sij)) {
+                separationViolated = true;
+                if (runway.h[j] < runway.g[i]){ // if penalization for delaying j is smaller than penalization for advancing i
+                    if (Xj + Sij < runway.L[j]) { // if delaying j does not violate its latest time window limit (L), delay j
+                        runway.X[j] = Xj + Sij;
+                    }
+                    else if (Xi + Sij < runway.E[i]) { // if advancing i does not violate its earliest time window limit (E), advance i
+                        runway.X[i] = Xi + Sij;
+                    }
+                    else { // else this means that the separation constraint cannot be respected
+                        std::cout << "Error: separation constraint cannot be respected for planes " << i << " and " << j << std::endl;
+                        return -1;
+                    }
+                }
+                else { // else penalization for advancing i is smaller than penalization for delaying j
+                    if (Xi + Sij < runway.E[i]) { // if advancing i does not violate its earliest time window limit (E), advance i
+                        runway.X[i] = Xi + Sij;
+                    }
+                    else if (Xj + Sij < runway.L[j]) { // if delaying j does not violate its latest time window limit (L), delay j
+                        runway.X[j] = Xj + Sij;
+                    }
+                    else { // else this means that the separation constraint cannot be respected
+                        std::cout << "Error: separation constraint cannot be respected for planes " << j << " and " << j << std::endl;
+                        return -1;
+                    }
+                }
+            }
+        }
+    }
+
+    // Calculate the total penalization by iterating through the planes
+    for (int i = 0; i < numPlanes; i++) {
+        int Xi = runway.X[i];
+        int Ti = runway.T[i];
+        int gi = runway.g[i];
+        int hi = runway.h[i];
+        
+        // Calculate penalization for plane i and add it to the total penalization
+        totalPenalization += calculatePenalization(Xi, Ti, gi, hi);
+    }
+
+    // Return the total penalization
+    return totalPenalization;
+
+    
+}
 
 
