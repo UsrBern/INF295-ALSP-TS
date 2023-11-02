@@ -11,30 +11,6 @@
 
 #include <algorithm>
 
-void printSolution(const std::vector<Plane>& planes, int totalPenalization, double computationTime) {
-    // Sort the planes vector by their landing time
-    std::vector<Plane> sortedPlanes = planes;
-    std::sort(sortedPlanes.begin(), sortedPlanes.end(), [](const Plane& a, const Plane& b) {
-        return a.assignedLandingTime < b.assignedLandingTime;
-    });
-
-    std::cout << "| Plane |";
-    for (const Plane& plane : sortedPlanes) {
-        std::cout << " " << std::setw(6) << plane.planeID << " |";
-    }
-    std::cout << "\n| Time  |";
-    for (const Plane& plane : sortedPlanes) {
-        std::cout << " " << std::setw(6) << plane.assignedLandingTime << " |";
-    }
-    std::cout << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "Total Cost: " << totalPenalization << std::endl;
-    std::cout << "Computation Time: " << computationTime << " ms" << std::endl;
-}
-
-
-
 int main() {
     // Read input file
     std::string fileName;
@@ -73,7 +49,7 @@ int main() {
             S.push_back(s);
         }        
 
-        planes.push_back(Plane(E, T, L, g, h, S, i+1));
+        planes.push_back(Plane(E, T, L, g, h, S));
     }
 
     // Close input file

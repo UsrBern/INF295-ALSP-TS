@@ -9,12 +9,10 @@ public:
     float g;
     float h;
     std::vector<int> S;
-    int assignedLandingTime;
-    int planeID;
 
     // Constructor to initialize a Plane
-    Plane(int e, int t, int l, int penaltyG, int penaltyH, const std::vector<int>& separations, int ID) 
-        : E(e), T(t), L(l), g(penaltyG), h(penaltyH), S(separations), assignedLandingTime(-1), planeID(ID) {
+    Plane(int e, int t, int l, int penaltyG, int penaltyH, const std::vector<int>& separations) 
+        : E(e), T(t), L(l), g(penaltyG), h(penaltyH), S(separations) {
     }
 
     void print() const {
