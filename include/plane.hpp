@@ -55,6 +55,7 @@ public:
     }
 
     void print() const {
+        std::cout << "Plane parameters:" << std::endl;
         for (size_t i = 0; i < E.size(); i++) {
             std::cout << "E" << i + 1 << ": " << E[i] << " ";
         }
