@@ -80,7 +80,7 @@ int main() {
     std::cout << std::endl;
 
     std::cout << "Total Cost: " << totalPenalization << std::endl;
-    std::cout << "Computation Time: " << computationTime << " ms" << std::endl;
+    std::cout << "Computation Time: " << elapsedTime.count() * 1000 << " ms" << std::endl;
 
     return 0;
 }

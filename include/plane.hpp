@@ -101,12 +101,13 @@ public:
 
         // Print runway schedule
         std::cout << "| Plane |";
-        for (int i = 0; i < X.size(); i++) {
-            std::cout << " " << std::setw(6) << sortedIndices[i+1] << " |";
+        for (size_t i = 0; i < X.size(); i++) {
+            std::cout << " " << std::setw(6) << sortedIndices[i] + 1 << " |";
         }
         std::cout << "\n| Time  |";
-        for (int i = 0; i < X.size(); i++) {
-            std::cout << " " << std::setw(6) << X[i] << " |";
+        for (size_t i = 0; i < X.size(); i++) {
+            std::cout << " " << std::setw(6) << X[sortedIndices[i]] << " |";
         }
+        std::cout << std::endl;
     }
 };

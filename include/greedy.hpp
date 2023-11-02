@@ -127,7 +127,7 @@ int greedyAlgorithm(Runway& runway) {
         for (int p = 0; p < numPlanes; p++){
             int i = sortedIndices[p];
             int j = sortedIndices[p + 1];
-            if (j == numPlanes) { // if we have reached the last plane in the sequence
+            if (p + 1 == numPlanes) { // if we have reached the last plane in the sequence
                 break;
             }
             
