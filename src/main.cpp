@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <string>
 #include <regex>
-#include "../include/greedy.hpp"
+#include "headers/greedy.hpp"
 
 #include <algorithm>
 
@@ -67,16 +67,18 @@ int main() {
     // Create a solution vector and compute the initial solution
     std::vector<int> solution(p, -1);
     auto start = std::chrono::high_resolution_clock::now();
-    int totalPenalization = greedyAlgorithm(runway, p);
+    greedyAlgorithm(runway, p);
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsedTime = end - start;
+
+    int totalPenalization = evaluationFunction(runway, p);
 
     // Print solution
     runway.printRunwaySchedule();
     std::cout << std::endl;
 
-    std::cout << "Total Cost: " << totalPenalization << std::endl;
-    std::cout << "Computation Time: " << elapsedTime.count() * 1000 << " ms" << std::endl;
+    std::cout << "Costo Total: " << totalPenalization << std::endl;
+    std::cout << "Tiempo de Computo: " << elapsedTime.count() << " [seg]" << std::endl;
 
     return 0;
 }

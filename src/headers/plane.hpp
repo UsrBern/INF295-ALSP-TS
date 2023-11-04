@@ -98,14 +98,30 @@ public:
         });
 
         // Print runway schedule
-        std::cout << "| Plane |";
+        std::cout << "| Avion | Instante |\n";
         for (size_t i = 0; i < X.size(); i++) {
-            std::cout << " " << std::setw(6) << sortedIndices[i] + 1 << " |";
-        }
-        std::cout << "\n| Time  |";
-        for (size_t i = 0; i < X.size(); i++) {
-            std::cout << " " << std::setw(6) << X[sortedIndices[i]] << " |";
+            std::cout << "| " << std::setw(5) << sortedIndices[i] + 1 << " | " << std::setw(8) << X[sortedIndices[i]] << " |\n";
         }
         std::cout << std::endl;
     }
 };
+
+// Function to calculate the penalization for a given plane's landing time
+int calculatePenalization(int landingTime, int Ti, int gi, int hi) {
+    if (landingTime < Ti) {
+        return gi * (Ti - landingTime);
+    }
+    else {
+        return hi * (landingTime - Ti);
+    }
+}
+
+// Evaluation Function
+int evaluationFunction(const Runway& runway, int p) {
+    int totalPenalization = 0;
+    for (size_t i = 0; i < p; i++) {
+        int penalization = calculatePenalization(runway.X[i], runway.T[i], runway.g[i], runway.h[i]);
+        totalPenalization += penalization;
+    }
+    return totalPenalization;
+}
