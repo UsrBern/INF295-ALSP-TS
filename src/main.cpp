@@ -24,7 +24,7 @@ int main() {
         if (!std::regex_match(fileName, fileNamePattern)) {
             std::cout << "Error: Invalid input file name. Try again." << std::endl;
         } else {
-            inputFile.open("../instances/" + fileName);
+            inputFile.open("src/instances/" + fileName);
             if (!inputFile.is_open()) {
                 std::cout << "Error: Could not open file. Try again." << std::endl;
             }

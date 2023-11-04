@@ -8,8 +8,6 @@
 // Greedy algorithm to generate the initial solution
 
 void greedyAlgorithm(Runway& runway, int numPlanes) {
-    int totalPenalization = 0;
-
     // Extract T vector from runway object
     std::vector<int> T = runway.T;
 

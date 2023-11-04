@@ -90,7 +90,7 @@ public:
 
         // Sort landing times vector (X), preserve their indices
         std::vector<int> sortedIndices(X.size());
-        for (int i = 0; i < X.size(); i++) {
+        for (size_t i = 0; i < X.size(); i++) {
             sortedIndices[i] = i;
         }
         std::sort(sortedIndices.begin(), sortedIndices.end(), [&X](int i1, int i2) {
@@ -119,7 +119,7 @@ int calculatePenalization(int landingTime, int Ti, int gi, int hi) {
 // Evaluation Function
 int evaluationFunction(const Runway& runway, int p) {
     int totalPenalization = 0;
-    for (size_t i = 0; i < p; i++) {
+    for (int i = 0; i < p; i++) {
         int penalization = calculatePenalization(runway.X[i], runway.T[i], runway.g[i], runway.h[i]);
         totalPenalization += penalization;
     }

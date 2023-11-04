@@ -2,5 +2,16 @@
 
 * Compliacion
 
-Correr `g++ -std=c++20 -o ALSP main.cpp` en carpeta src
-Luego `./ALSP` en src
+En el directorio raiz del proyecto ejectuar:
+    
+```bash
+$ make
+```
+
+* Ejecucion
+
+En el directorio raiz del proyecto ejectuar:
+    
+```bash
+$ ./main
+```
