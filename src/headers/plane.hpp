@@ -57,10 +57,21 @@ public:
     }
 
     // Copy constructor
-    Runway(const Runway& other)
-        : X(other.X), T(other.T), g(other.g), h(other.h), E(other.E), L(other.L), S(other.S) {
-        // Copy each member variable from the other Runway
+    Runway(const Runway& other) 
+    : E(other.E), T(other.T), L(other.L), g(other.g), h(other.h), S(other.S), X(other.X) {}
+    Runway& operator=(const Runway& other) {
+    if (this != &other) {
+        E = other.E;
+        T = other.T;
+        L = other.L;
+        g = other.g;
+        h = other.h;
+        S = other.S;
+        X = other.X;
     }
+    return *this;
+}
+    
 
     void print() const {
         std::cout << "Plane parameters:" << std::endl;

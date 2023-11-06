@@ -8,6 +8,7 @@
 #include <string>
 #include <regex>
 #include "headers/greedy.hpp"
+#include "headers/tabu.hpp"
 
 #include <algorithm>
 
@@ -65,9 +66,17 @@ int main() {
     }
     
     // Create a solution vector and compute the initial solution
-    std::vector<int> solution(p, -1);
-    auto start = std::chrono::high_resolution_clock::now();
+    std::cout << "Computing initial solution..." << std::endl;
     greedyAlgorithm(runway, p);
+    runway.printRunwaySchedule();
+
+    // Initialize Tabu-Search
+    TabuSearch tabu(p*0.4);
+
+    // Run Tabu-Search
+    std::cout << "Running Tabu-Search..." << std::endl;
+    auto start = std::chrono::high_resolution_clock::now();
+    tabu.search(runway, p, 5);
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsedTime = end - start;
 
