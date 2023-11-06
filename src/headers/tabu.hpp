@@ -99,8 +99,18 @@ public:
                 tempR.X = neighbor;
                 int neighborCost = evaluationFunction(tempR, p);
 
+                bool isInTabuList = false;
+                for (const auto& swap : tabuList) {
+                    if (swap.first == i && swap.second == j) {
+                        isInTabuList = true;
+                        break;
+                    }
+                }
+
+                bool improvesCurrentSolution = neighborCost < currentCost;
+
                 // If the neighbor is better, feasible, and not tabu (or better than the best solution), update the current solution
-                if (isFeasible && neighborCost < currentCost && (!isSwapTabu(i, j))) {
+                if (isFeasible && (!isInTabuList || improvesCurrentSolution)) {
                     candidateRunway.X = neighbor;
                     currentCost = evaluationFunction(candidateRunway, p);
                     bestSwapI = i;
