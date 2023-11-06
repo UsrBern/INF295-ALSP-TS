@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <iomanip>
 
 class Plane {
 public:
@@ -50,6 +51,12 @@ public:
             h.push_back(plane.h);
             S.push_back(plane.S);
         }
+    }
+
+    // Copy constructor
+    Runway(const Runway& other)
+        : X(other.X), T(other.T), g(other.g), h(other.h), E(other.E), L(other.L), S(other.S) {
+        // Copy each member variable from the other Runway
     }
 
     void print() const {
