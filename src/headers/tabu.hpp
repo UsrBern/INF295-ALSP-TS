@@ -35,9 +35,14 @@ public:
         std::vector<std::pair<int, int>> swaps;
         for (size_t i = 0; i < solution.size(); i++) {
             for (size_t j = i + 1; j < solution.size(); j++) {
-                std::vector<int> neighbor = swap(solution, i, j);
-                neighbors.push_back(neighbor);
-                swaps.push_back(std::make_pair(i, j));
+                for (size_t k = j + 1; k < solution.size(); k++) {
+                    std::vector<int> neighbor = solution;
+                    std::swap(neighbor[i], neighbor[j]);
+                    std::swap(neighbor[j], neighbor[k]);
+                    neighbors.push_back(neighbor);
+                    swaps.push_back(std::make_pair(i, j));
+                    swaps.push_back(std::make_pair(j, k));
+                }
             }
         }
         return std::make_pair(neighbors, swaps);
@@ -53,14 +58,14 @@ public:
 
         for (int iteration = 0; iteration < maxIterations; iteration++) {
             int currentCost = evaluationFunction(runway, p);
-            size_t bestSwapI, bestSwapJ; // Declare variables to store the best swap
+            size_t bestSwapI, bestSwapJ, bestSwapK; // Declare variables to store the best swap
 
             // Generate neighbors
             auto [neighbors, swaps] = generateNeighbors(candidateRunway.X);
 
             for (int n = 0; n < p; n++) {
                 std::vector<int> neighbor = neighbors[n];
-                int i = swaps[n].first, j = swaps[n].second;
+                int i = swaps[n].first, j = swaps[n].second, k = swaps[n+1].second;
 
                 // Check the constraints
                 bool isFeasible = true;
@@ -115,6 +120,7 @@ public:
                     currentCost = evaluationFunction(candidateRunway, p);
                     bestSwapI = i;
                     bestSwapJ = j;
+                    bestSwapK = k;
                 }
             }
 
@@ -126,6 +132,7 @@ public:
 
             // Add the best swap to the tabu list
             addSwapToTabuList(bestSwapI, bestSwapJ);
+            addSwapToTabuList(bestSwapJ, bestSwapK);
         }
 
         // Set the best solution found as the solution of the runway

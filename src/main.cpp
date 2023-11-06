@@ -6,6 +6,7 @@
 #include <chrono>
 #include <algorithm>
 #include <string>
+#include <random>
 #include <regex>
 #include "headers/greedy.hpp"
 #include "headers/tabu.hpp"
@@ -58,12 +59,6 @@ int main() {
 
     // Create a Runway object
     Runway runway(planes);
-    char printAsk;
-    std::cout << "Print the runway parameters? (y/n) ";
-    std::cin >> printAsk;
-    if (printAsk == 'y') {
-        runway.print();
-    }
     
     // Create a solution vector and compute the initial solution
     std::cout << "Computing initial solution..." << std::endl;
@@ -71,12 +66,30 @@ int main() {
     runway.printRunwaySchedule();
 
     // Initialize Tabu-Search
-    TabuSearch tabu(p*0.4);
+    // Randomize the tabu tenure within a range [minTabuTenure, maxTabuTenure]
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(p*0.4, p*0.8);
+    size_t tabuTenure = dis(gen);
+    TabuSearch tabu(tabuTenure);
 
     // Run Tabu-Search
     std::cout << "Running Tabu-Search..." << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
-    tabu.search(runway, p, 5);
+    int noImprovementLimit = 100;  // Stop if no improvement after 100 iterations
+    int iterationsWithoutImprovement = 0;
+    int bestPenalization = INT_MAX;
+
+    while (iterationsWithoutImprovement < noImprovementLimit) {
+        tabu.search(runway, p, 5);
+        int currentPenalization = evaluationFunction(runway, p);
+        if (currentPenalization < bestPenalization) {
+            bestPenalization = currentPenalization;
+            iterationsWithoutImprovement = 0;
+        } else {
+            iterationsWithoutImprovement++;
+        }
+    }
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsedTime = end - start;
 
