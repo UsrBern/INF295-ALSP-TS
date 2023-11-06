@@ -1,3 +1,6 @@
+#ifndef PLANE_HPP
+#define PLANE_HPP
+
 #include <iostream>
 #include <vector>
 #include <iomanip>
@@ -132,3 +135,5 @@ int evaluationFunction(const Runway& runway, int p) {
     }
     return totalPenalization;
 }
+
+#endif
