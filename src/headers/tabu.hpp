@@ -43,63 +43,57 @@ public:
 
     // Your method to generate neighbors, evaluate them and update the best solution
     void search(Runway& runway, int p, int maxIterations) {
-        Runway bestRunway = runway; // Copy of the original runway
+        Runway bestRunway = runway;
         int bestCost = evaluationFunction(runway, p);
         
-
-        // Initialize s matrix
-        std::vector<std::vector<int>> s(p, std::vector<int>(p, 0));
+        // Initialize candidate
+        Runway candidateRunway = bestRunway;
 
         for (int iteration = 0; iteration < maxIterations; iteration++) {
-            Runway candidateRunway = bestRunway; // Copy of the best runway
             int currentCost = evaluationFunction(runway, p);
             size_t bestSwapI, bestSwapJ; // Declare variables to store the best swap
 
             // Generate neighbors by swapping each pair of times
-            for (size_t i = 0; i < candidateRunway.X.size(); i++) {
-                for (size_t j = i + 1; j < candidateRunway.X.size(); j++) {
+            for (size_t i = 0; i < p; i++) {
+                for (size_t j = i + 1; j < p; j++) {
                     Runway neighborRunway = candidateRunway; // Copy of the candidate runway
                     neighborRunway.X = swap(candidateRunway.X, i, j);
-
-                    // Update s matrix
-                    for (size_t k = 0; k < neighborRunway.X.size(); k++) {
-                        for (size_t l = k + 1; l < neighborRunway.X.size(); l++) {
-                            s[k][l] = (neighborRunway.X[k] < neighborRunway.X[l]) ? 1 : 0;
-                        }
-                    }
 
                     // Evaluate the neighbor
                     int neighborCost = evaluationFunction(neighborRunway, p);
                     std::vector<int> neighbor = neighborRunway.X;
 
+                    // Sort neighbor by X[i]
+                    // Neighbor is now sorted by runway sequence
+                    std::vector<int> sortedIndices(p);
+                    for (size_t k = 0; k < neighbor.size(); k++) {
+                        sortedIndices[k] = k;
+                    }
+                    std::sort(sortedIndices.begin(), sortedIndices.end(), [&neighbor](int i1, int i2) {
+                        return neighbor[i1] < neighbor[i2];
+                    });
+
                     // Check the constraints
                     bool isFeasible = true;
 
                     // Range Constraint: E[i] <= X[i] <= L[i]
-                    for (size_t k = 0; k < neighbor.size(); k++) {
-                        if (neighbor[k] < runway.E[k] || neighbor[k] > runway.L[k]) {
+                    for (size_t k = 0; k < p; k++) {
+                        size_t i = sortedIndices[k];
+                        if (neighbor[k] < runway.E[i] || neighbor[k] > runway.L[i]) {
                             isFeasible = false;
                             break;
                         }
                     }
 
-                    // Separation Constraint: X[j] >= X[i] + S[i][j] - M * s[i][j]
-                    for (size_t k = 0; k < neighbor.size() && isFeasible; k++) {
-                        for (size_t l = k + 1; l < neighbor.size(); l++) {
-                            if (neighbor[l] < neighbor[k] + runway.S[k][l] - M * s[k][l]) {
-                                isFeasible = false;
-                                break;
-                            }
+                    // Separation Constraint: X[j] >= X[i] + S[i][j]
+                    for (size_t k = 0; k < p && isFeasible; k++) {
+                        if (k+1 == p) {
+                            break;
                         }
-                    }
-
-                    // Succession Constraint: s[i][j] + s[i][j] <= 1
-                    for (size_t k = 0; k < s.size() && isFeasible; k++) {
-                        for (size_t l = 0; l < s[k].size(); l++) {
-                            if (s[k][l] + s[l][k] > 1) {
-                                isFeasible = false;
-                                break;
-                            }
+                        size_t i = sortedIndices[k], j = sortedIndices[k+1];
+                        if (neighbor[k+1] < neighbor[k] + runway.S[i][j]) {
+                            isFeasible = false;
+                            break;
                         }
                     }
 
@@ -121,9 +115,6 @@ public:
 
             // Add the best swap to the tabu list
             addSwapToTabuList(bestSwapI, bestSwapJ);
-
-            // Update candidateSolution for the next iteration
-            candidateRunway = bestRunway;
         }
 
         // Set the best solution found as the solution of the runway
