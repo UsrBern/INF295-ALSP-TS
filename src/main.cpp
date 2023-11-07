@@ -77,7 +77,7 @@ int main() {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dis(p*0.4, p*0.6);
-    size_t tabuTenure = dis(gen);
+    size_t tabuTenure = p/10;
     TabuSearch tabu(tabuTenure);
 
     // Run Tabu-Search
@@ -88,7 +88,7 @@ int main() {
     int bestPenalization = INT_MAX;
 
     while (iterationsWithoutImprovement < noImprovementLimit) {
-        tabu.search(runway, p, p/4);
+        tabu.search(runway, p, p/10);
         int currentPenalization = evaluationFunction(runway, p);
         if (currentPenalization < bestPenalization) {
             bestPenalization = currentPenalization;

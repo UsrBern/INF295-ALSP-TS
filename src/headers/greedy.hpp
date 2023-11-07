@@ -5,6 +5,19 @@
 #include <limits>
 #include "plane.hpp"
 
+bool isSeparationRespected(Runway& runway, int planeIndex, int newTime) {
+    for (int i = 0; i < int(runway.X.size()); i++) {
+        if (i != planeIndex) {
+            int Xi = runway.X[i];
+            int Sij = runway.S[planeIndex][i];
+            if (newTime == Xi || (newTime < Xi + Sij && newTime > Xi - Sij)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 // Greedy algorithm to generate the initial solution
 void greedyAlgorithm(Runway& runway, int numPlanes) {
     // Extract T vector from runway object
@@ -45,12 +58,12 @@ void greedyAlgorithm(Runway& runway, int numPlanes) {
             // If the separation is not respected, alter landing times to respect it
             if (!(Xj >= Xi + Sij)) {
                 separationViolated = true;
-                if (runway.h[j] < runway.g[i]){ // if penalization for delaying j is smaller than penalization for advancing i
-                    if (Xj + Sij <= runway.L[j]) { // if delaying j does not violate its latest time window limit (L), delay j
+                if (runway.h[j] < runway.g[i]) { // if penalization for delaying j is smaller than penalization for advancing i
+                    if (Xj + Sij <= runway.L[j] && isSeparationRespected(runway, j, Xj + Sij)) { // if delaying j does not violate its latest time window limit (L) and separation constraint with other planes, delay j
                         runway.X[j] = Xj + Sij;
                         separationViolated = false;
                     }
-                    else if (Xi + Sij >= runway.E[i]) { // if advancing i does not violate its earliest time window limit (E), advance i
+                    else if (Xi - Sij >= runway.E[i] && isSeparationRespected(runway, i, Xi - Sij)) { // if advancing i does not violate its earliest time window limit (E) and separation constraint with other planes, advance i
                         runway.X[i] = Xi - Sij;
                         separationViolated = false;
                     }
@@ -60,11 +73,11 @@ void greedyAlgorithm(Runway& runway, int numPlanes) {
                     }
                 }
                 else { // else penalization for advancing i is smaller than penalization for delaying j
-                    if (Xi + Sij <= runway.E[i]) { // if advancing i does not violate its earliest time window limit (E), advance i
+                    if (Xi + Sij <= runway.E[i] && isSeparationRespected(runway, i, Xi + Sij)) { // if advancing i does not violate its earliest time window limit (E) and separation constraint with other planes, advance i
                         runway.X[i] = Xi + Sij;
                         separationViolated = false;
                     }
-                    else if (Xj + Sij >= runway.L[j]) { // if delaying j does not violate its latest time window limit (L), delay j
+                    else if (Xj - Sij >= runway.L[j] && isSeparationRespected(runway, j, Xj - Sij)) { // if delaying j does not violate its latest time window limit (L) and separation constraint with other planes, delay j
                         runway.X[j] = Xj - Sij;
                         separationViolated = false;
                     }
