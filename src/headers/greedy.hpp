@@ -7,31 +7,24 @@
 
 // Greedy algorithm to generate the initial solution
 void greedyAlgorithm(Runway& runway, int numPlanes) {
-    std::cout << runway.S[10][2] << std::endl;
     // Extract T vector from runway object
     std::vector<int> T = runway.T;
 
-    // Pair up the original indices with the T vector
-    std::vector<std::pair<int, int>> pairs(T.size());
-    for (size_t i = 0; i < T.size(); i++) {
-        pairs[i] = std::make_pair(T[i], i + 1); // +1 if your indices are 1-based
+    // Sort the planes vector by T
+    // Sort the landing times vector (X) by T
+    std::vector<int> sortedIndices(numPlanes);
+    for (int i = 0; i < numPlanes; i++) {
+        sortedIndices[i] = i;
     }
+    std::sort(sortedIndices.begin(), sortedIndices.end(), [&T](int a, int b) {
+        return T[a] < T[b];
+    });
 
-    // Sort the pairs vector
-    std::sort(pairs.begin(), pairs.end());
-
-    // Extract the sorted T and sortedIndices vectors
-    std::vector<int> sortedT(T.size());
-    std::vector<int> sortedIndices(T.size());
-    for (size_t i = 0; i < pairs.size(); i++) {
-        sortedT[i] = pairs[i].first;
-        sortedIndices[i] = pairs[i].second;
-    }
     // Initialize landing times vector with the runway's T values
-    runway.X.resize(numPlanes);
+    runway.X.resize(T.size());
     for (int i = 0; i < numPlanes; i++) {
         int index = sortedIndices[i];
-        runway.X[index] = sortedT[i];
+        runway.X[index] = T[index];
     }
 
     // Separation of plane i and j is plane[i].S[j]
@@ -40,20 +33,17 @@ void greedyAlgorithm(Runway& runway, int numPlanes) {
     while (separationViolated) {
         for (int p = 0; p < numPlanes; p++){
             int i = sortedIndices[p];
-            int j;
-            if (p + 1 < numPlanes) {
-                j = sortedIndices[p + 1];
-            } else {
+            int j = sortedIndices[p + 1];
+            if (p + 1 == numPlanes) { // if we have reached the last plane in the sequence
                 break;
             }
-            std::cout << "i: " << i << " j: " << j << std::endl;
-
+            
             int Sij = runway.S[i][j];
             int Xi = runway.X[i];
             int Xj = runway.X[j];
 
             // If the separation is not respected, alter landing times to respect it
-            if (Xj < Xi + Sij) {
+            if (!(Xj >= Xi + Sij)) {
                 separationViolated = true;
                 if (runway.h[j] < runway.g[i]){ // if penalization for delaying j is smaller than penalization for advancing i
                     if (Xj + Sij <= runway.L[j]) { // if delaying j does not violate its latest time window limit (L), delay j
