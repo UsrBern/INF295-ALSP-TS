@@ -1,4 +1,4 @@
-Test results of each instance:
+Test results of each instance (manually inputted):
 
 airland1 - No improvement - t = 0.239104 [seg]
 airland2 - Improvement: 2360 -> 2260 - t = 1.02517 [seg]
@@ -6,8 +6,8 @@ airland3 - No improvement - t = 6.02145 [seg]
 airland4 - No improvement - t = 6.01473 [seg]
 airland5 - No improvement - t = 5.89116 [seg] - BROKEN
 airland6 - Improvement: 2508 -> 1263 - t = 36.363 [seg] - tsol < 1 [seg]
-airland7 - Improvement: 800 -> 376 - t = 570.371 [seg] - tsol ~= 1 [seg]
-airland8 - No improvement - t > 15 [min]
+airland7 - Improvement: 800 -> 379 - t = 209.924 [seg] - tsol < 1 [seg]
+airland8 - No improvement - 472.056 [seg]
 airland9 - No improvement - t > 15 [min]
 airland10 - No improvement - t = 0.000000 [seg]
 airland11 - No improvement - t = 0.000000 [seg]
