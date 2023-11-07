@@ -4,8 +4,6 @@
 #include "plane.hpp"
 
 int M = 100000;
-bool hasImproved = false;
-bool hasInformed = false;
 
 class TabuSearch {
 private:
@@ -95,8 +93,12 @@ public:
 
     // Your method to generate neighbors, evaluate them and update the best solution
     void search(Runway& runway, int p, int maxIterations) {
+        bool hasImproved = false;
+        bool hasInformed = false;
+
         Runway bestRunway = runway;
         int bestCost = evaluationFunction(runway, p);
+        int initCost = bestCost;
         bool improvesBestSolution = false;
 
         // Initialize values
@@ -176,9 +178,9 @@ public:
 
         if (hasImproved && !hasInformed){
             hasInformed = true;
-            std::cout << "Se ha encontrado una mejor solucion" << std::endl;
+            std::cout << "Se ha encontrado una mejor solucion: " << initCost << " -> " << bestCost << std::endl;
+            bestRunway.printRunwaySchedule();
         }
-        
     }
     
 };
