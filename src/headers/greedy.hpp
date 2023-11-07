@@ -31,7 +31,6 @@ void greedyAlgorithm(Runway& runway, int numPlanes) {
     // Iterate over all pairs of planes to ensure separation is respected
     bool separationViolated = true;
     while (separationViolated) {
-        separationViolated = false;
         for (int p = 0; p < numPlanes; p++){
             int i = sortedIndices[p];
             int j = sortedIndices[p + 1];
@@ -47,25 +46,31 @@ void greedyAlgorithm(Runway& runway, int numPlanes) {
             if (!(Xj >= Xi + Sij)) {
                 separationViolated = true;
                 if (runway.h[j] < runway.g[i]){ // if penalization for delaying j is smaller than penalization for advancing i
-                    if (Xj + Sij < runway.L[j]) { // if delaying j does not violate its latest time window limit (L), delay j
+                    if (Xj + Sij <= runway.L[j]) { // if delaying j does not violate its latest time window limit (L), delay j
                         runway.X[j] = Xj + Sij;
+                        separationViolated = false;
                     }
-                    else if (Xi + Sij < runway.E[i]) { // if advancing i does not violate its earliest time window limit (E), advance i
-                        runway.X[i] = Xi + Sij;
+                    else if (Xi + Sij >= runway.E[i]) { // if advancing i does not violate its earliest time window limit (E), advance i
+                        runway.X[i] = Xi - Sij;
+                        separationViolated = false;
                     }
                     else { // else this means that the separation constraint cannot be respected
-                        std::cout << "Error: separation constraint cannot be respected for planes " << i << " and " << j << std::endl;
+                        runway.X[j] = runway.L[j];
+                        separationViolated = false;
                     }
                 }
                 else { // else penalization for advancing i is smaller than penalization for delaying j
-                    if (Xi + Sij < runway.E[i]) { // if advancing i does not violate its earliest time window limit (E), advance i
+                    if (Xi + Sij <= runway.E[i]) { // if advancing i does not violate its earliest time window limit (E), advance i
                         runway.X[i] = Xi + Sij;
+                        separationViolated = false;
                     }
-                    else if (Xj + Sij < runway.L[j]) { // if delaying j does not violate its latest time window limit (L), delay j
-                        runway.X[j] = Xj + Sij;
+                    else if (Xj + Sij >= runway.L[j]) { // if delaying j does not violate its latest time window limit (L), delay j
+                        runway.X[j] = Xj - Sij;
+                        separationViolated = false;
                     }
                     else { // else this means that the separation constraint cannot be respected
-                        std::cout << "Error: separation constraint cannot be respected for planes " << j << " and " << j << std::endl;
+                        runway.X[i] = runway.E[i];
+                        separationViolated = false;
                     }
                 }
             }
