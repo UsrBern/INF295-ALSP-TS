@@ -56,7 +56,7 @@ public:
                 neighbor[i] = runway.L[i];
             }
         }
-        
+
         // Check separation constraints
         std::vector<int> temp = neighbor;
         std::vector<int> sortedIndices(p);
@@ -96,6 +96,7 @@ public:
     void search(Runway& runway, int p, int maxIterations) {
         Runway bestRunway = runway;
         int bestCost = evaluationFunction(runway, p);
+        bool improvesBestSolution = false;
 
         // Initialize values
         Runway candidateRunway = bestRunway;
@@ -133,7 +134,10 @@ public:
                 int neighborCost = evaluationFunction(tempR, p);
                 bool isInTabuList = isKOptTabu(i, j);
                 bool improvesCurrentSolution = neighborCost < currentCost;
-                bool improvesBestSolution = neighborCost < bestCost;
+                improvesBestSolution = neighborCost < bestCost;
+                if (improvesBestSolution) {
+                    hasImproved = true;
+                }
 
                 // Print table row
                 std::cout << std::left << std::setw(10) << iteration 
@@ -144,12 +148,6 @@ public:
                         << std::setw(15) << std::boolalpha << isInTabuList 
                         << std::setw(25) << std::boolalpha << improvesCurrentSolution
                         << std::setw(25) << std::boolalpha << improvesBestSolution << std::endl;
-                
-                if (improvesBestSolution){
-                    bestRunway = tempR;
-                    bestCost = neighborCost;
-                    hasImproved = true;
-                }
 
                 // If the neighbor is better, feasible, and not tabu (or better than the best solution), update the current solution
                 if (!isInTabuList || improvesCurrentSolution) {
@@ -159,12 +157,14 @@ public:
                     bestKOptJ = j;
                     foundValidKOpt = true;
                 }
+
+                // Update the best solution
+                if (improvesBestSolution) {
+                    bestRunway = candidateRunway;
+                    bestCost = currentCost;
+                }
             }
-            // Update the best solution
-            if (currentCost < bestCost) {
-                bestRunway = candidateRunway;
-                bestCost = currentCost;
-            }
+            
             // Add the best k-opt to the tabu list
             if (foundValidKOpt) {
                 addKOptToTabuList(bestKOptI, bestKOptJ);
