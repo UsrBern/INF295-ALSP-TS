@@ -69,25 +69,26 @@ int main() {
     // Create a solution vector and compute the initial solution
     std::cout << "Computing initial solution..." << std::endl;
     greedyAlgorithm(runway, p);
-    runway.printRunwaySchedule();
+    runway.printRunwaySchedule();std::cout << std::endl;
+    std::cout << "Costo Total: " << evaluationFunction(runway, p) << std::endl;
 
     // Initialize Tabu-Search
     // Randomize the tabu tenure within a range [minTabuTenure, maxTabuTenure]
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(p*0.4, p*0.8);
+    std::uniform_int_distribution<> dis(p*0.4, p*0.6);
     size_t tabuTenure = dis(gen);
-    TabuSearch tabu(tabuTenure);
+    TabuSearch tabu(p/4);
 
     // Run Tabu-Search
     std::cout << "Running Tabu-Search..." << std::endl;
     auto start = std::chrono::high_resolution_clock::now();
-    int noImprovementLimit = 100;  // Stop if no improvement after 100 iterations
+    int noImprovementLimit = 50*p;
     int iterationsWithoutImprovement = 0;
     int bestPenalization = INT_MAX;
 
     while (iterationsWithoutImprovement < noImprovementLimit) {
-        tabu.search(runway, p, 5);
+        tabu.search(runway, p, p/4);
         int currentPenalization = evaluationFunction(runway, p);
         if (currentPenalization < bestPenalization) {
             bestPenalization = currentPenalization;
@@ -107,6 +108,13 @@ int main() {
 
     std::cout << "Costo Total: " << totalPenalization << std::endl;
     std::cout << "Tiempo de Computo: " << elapsedTime.count() << " [seg]" << std::endl;
+
+    // Print Greedy Solution again
+    std::cout << std::endl << "Greedy Solution:" << std::endl;
+    greedyAlgorithm(runway, p);
+    runway.printRunwaySchedule();
+    std::cout << std::endl;
+    std::cout << "Costo Total: " << evaluationFunction(runway, p) << std::endl;
 
     return 0;
 }
