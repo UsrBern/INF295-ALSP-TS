@@ -59,6 +59,12 @@ int main() {
 
     // Create a Runway object
     Runway runway(planes);
+    char printAsk;
+    std::cout << "Print the runway parameters? (y/n) ";
+    std::cin >> printAsk;
+    if (printAsk == 'y') {
+        runway.print();
+    }
     
     // Create a solution vector and compute the initial solution
     std::cout << "Computing initial solution..." << std::endl;
