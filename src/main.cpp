@@ -59,17 +59,17 @@ int main() {
 
     // Create a Runway object
     Runway runway(planes);
-    char printAsk;
+    /*char printAsk;
     std::cout << "Print the runway parameters? (y/n) ";
     std::cin >> printAsk;
     if (printAsk == 'y') {
         runway.print();
-    }
+    }*/
     
     // Create a solution vector and compute the initial solution
     std::cout << "Computing initial solution..." << std::endl;
     greedyAlgorithm(runway, p);
-    runway.printRunwaySchedule();std::cout << std::endl;
+    Runway initialRunway = runway;
     std::cout << "Costo Total: " << evaluationFunction(runway, p) << std::endl;
 
     // Initialize Tabu-Search
@@ -78,7 +78,7 @@ int main() {
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dis(p*0.4, p*0.6);
     size_t tabuTenure = dis(gen);
-    TabuSearch tabu(p/4);
+    TabuSearch tabu(tabuTenure);
 
     // Run Tabu-Search
     std::cout << "Running Tabu-Search..." << std::endl;
@@ -102,19 +102,18 @@ int main() {
 
     int totalPenalization = evaluationFunction(runway, p);
 
+    // Print Greedy Solution
+    std::cout << std::endl << "Greedy Solution:" << std::endl;
+    initialRunway.printRunwaySchedule();
+    std::cout << std::endl;
+    std::cout << "Costo Total: " << evaluationFunction(initialRunway, p) << std::endl << std::endl << std::endl;
+
     // Print solution
+    std::cout << std::endl << "Tabu-Search Solution:" << std::endl;
     runway.printRunwaySchedule();
     std::cout << std::endl;
-
     std::cout << "Costo Total: " << totalPenalization << std::endl;
     std::cout << "Tiempo de Computo: " << elapsedTime.count() << " [seg]" << std::endl;
-
-    // Print Greedy Solution again
-    std::cout << std::endl << "Greedy Solution:" << std::endl;
-    greedyAlgorithm(runway, p);
-    runway.printRunwaySchedule();
-    std::cout << std::endl;
-    std::cout << "Costo Total: " << evaluationFunction(runway, p) << std::endl;
 
     return 0;
 }

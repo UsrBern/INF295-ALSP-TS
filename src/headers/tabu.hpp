@@ -5,6 +5,7 @@
 
 int M = 100000;
 bool hasImproved = false;
+bool hasInformed = false;
 
 class TabuSearch {
 private:
@@ -104,7 +105,7 @@ public:
         bool foundValidKOpt = false; // Flag to check if a valid k-opt has been found
         
         for (int iteration = 0; iteration < maxIterations; iteration++) {
-            if (iteration == 0) {
+            /*if (iteration == 0) {
                 std::cout << std::left << std::setw(10) << "Iteration" 
                         << std::setw(15) << "Current Cost" 
                         << std::setw(15) << "Best Cost" 
@@ -113,7 +114,7 @@ public:
                         << std::setw(15) << "In Tabu List" 
                         << std::setw(25) << "Improves Current Solution"
                         << std::setw(25) << "Improves Best Solution" << std::endl;
-            }
+            }*/
 
             bestKOptI = 0; // Reset at the start of each iteration
             bestKOptJ = 0; // Reset at the start of each iteration
@@ -140,14 +141,14 @@ public:
                 }
 
                 // Print table row
-                std::cout << std::left << std::setw(10) << iteration 
+                /*std::cout << std::left << std::setw(10) << iteration 
                         << std::setw(15) << currentCost 
                         << std::setw(15) << bestCost 
                         << std::setw(10) << n 
                         << std::setw(15) << neighborCost 
                         << std::setw(15) << std::boolalpha << isInTabuList 
                         << std::setw(25) << std::boolalpha << improvesCurrentSolution
-                        << std::setw(25) << std::boolalpha << improvesBestSolution << std::endl;
+                        << std::setw(25) << std::boolalpha << improvesBestSolution << std::endl;*/
 
                 // If the neighbor is better, feasible, and not tabu (or better than the best solution), update the current solution
                 if (!isInTabuList || improvesCurrentSolution) {
@@ -173,12 +174,11 @@ public:
         // Set the best solution found as the solution of the runway
         runway = bestRunway;
 
-        if (!hasImproved){
-            std::cout << "No se ha encontrado una mejor solucion" << std::endl;
-        }
-        else {
+        if (hasImproved && !hasInformed){
+            hasInformed = true;
             std::cout << "Se ha encontrado una mejor solucion" << std::endl;
         }
+        
     }
     
 };
