@@ -59,13 +59,7 @@ int main() {
 
     // Create a Runway object
     Runway runway(planes);
-    /*char printAsk;
-    std::cout << "Print the runway parameters? (y/n) ";
-    std::cin >> printAsk;
-    if (printAsk == 'y') {
-        runway.print();
-    }*/
-    
+
     // Create a solution vector and compute the initial solution
     std::cout << "Computing initial solution..." << std::endl;
     greedyAlgorithm(runway, p);
@@ -87,10 +81,10 @@ int main() {
     int iterationsWithoutImprovement = 0;
     int bestPenalization = INT_MAX;
 
-    while (iterationsWithoutImprovement < noImprovementLimit) {
+    while (iterationsWithoutImprovement < noImprovementLimit) { // Mientras no se cumpla el limite de iteraciones sin mejora, seguir buscando
         tabu.search(runway, p, p/10);
         int currentPenalization = evaluationFunction(runway, p);
-        if (currentPenalization < bestPenalization) {
+        if (currentPenalization < bestPenalization) { // Resetear el valor de busquedas sin mejora
             bestPenalization = currentPenalization;
             iterationsWithoutImprovement = 0;
         } else {
@@ -108,7 +102,7 @@ int main() {
     std::cout << std::endl;
     std::cout << "Costo Total: " << evaluationFunction(initialRunway, p) << std::endl << std::endl << std::endl;
 
-    // Print solution
+    // Print new solution
     std::cout << std::endl << "Tabu-Search Solution:" << std::endl;
     runway.printRunwaySchedule();
     std::cout << std::endl;
