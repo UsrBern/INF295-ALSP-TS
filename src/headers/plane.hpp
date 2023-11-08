@@ -5,20 +5,24 @@
 #include <vector>
 #include <iomanip>
 
+// Clase: Plane
+// Contiene la informacion de un solo avion
 class Plane {
 public:
-    int E;
-    int T;
-    int L;
-    float g;
-    float h;
-    std::vector<int> S;
+    int E; // E: Tiempo mas temprano de aterrizaje del avion
+    int T; // T: Tiempo ideal de aterrizaje del avion
+    int L; // L: Tiempo mas tardio de aterrizaje del avion
+    float g; // g: Penalizacion al avion por adelantarse a T
+    float h; // h: Penalizacion al avion por atrasarse segun T
+    std::vector<int> S; // S: Vector conteniendo la separacion minima requerida entre el avion actual y todos los otros
+                        // Si el avion actual es el avion i, S[j-1] es la separacion minima requerida entre el avion i y el avion j
 
     // Constructor to initialize a Plane
     Plane(int e, int t, int l, int penaltyG, int penaltyH, const std::vector<int>& separations) 
         : E(e), T(t), L(l), g(penaltyG), h(penaltyH), S(separations) {
     }
 
+    // Print para el avion (usado para debugging)
     void print() const {
         std::cout << "E: " << E << " T: " << T << " L: " << L << " g: " << g << " h: " << h << std::endl;
         for (size_t i = 0; i < S.size(); i++) {
@@ -28,10 +32,12 @@ public:
     }
 };
 
+// Clase: Runway
+// Contiene la informacion de todos los aviones a procesar
 class Runway {
 public:
-    // Parameters: E, T, L, g, h, S
-    // Index i of each vector contains plane i's information
+    // Vectores de arametros E, T, L, g, h, S que significan lo mismo que en la clase Plane
+    // La informacion contenida en el indice i-1 de cada vector corresponde a la informacion del avion i
     std::vector<int> E;
     std::vector<int> T;
     std::vector<int> L;
@@ -39,9 +45,8 @@ public:
     std::vector<float> h;
     std::vector<std::vector<int>> S;
 
-    // Representation:
-    // A vector of landing times, where X[i] contains the landing time of plane i
-    // This is the actual runway landing sequence
+    // Representacion:
+    // Vector de tiempos de aterrizaje, X[i-1] corresponde al tiempo de aterrizaje asignado al avion i
     std::vector<int> X;
 
     // Constructor
@@ -56,7 +61,8 @@ public:
         }
     }
 
-    // Copy constructor
+    // Copy constructor: Permite el uso de operaciones tipo `Runway runway2 = runway1`
+    // Retorna la copia de la runway que se esta copiando
     Runway(const Runway& other) 
     : E(other.E), T(other.T), L(other.L), g(other.g), h(other.h), S(other.S), X(other.X) {}
     Runway& operator=(const Runway& other) {
@@ -72,7 +78,7 @@ public:
     return *this;
 }
     
-
+    // Funcion print de debugging
     void print() const {
         std::cout << "Plane parameters:" << std::endl;
         for (size_t i = 0; i < E.size(); i++) {
@@ -105,6 +111,8 @@ public:
         std::cout << std::endl;
     }
 
+    // Funcion print que presenta la secuencia de aterrizaje en tiempo cronologico en forma de tabla vertical
+    // (no se uso tabla horizontal porque resulto ser demasiado larga para ser legible en terminal en las instancias mas grandes)
     void printRunwaySchedule() const {
         // Extract landing times vector (X) from runway object
         std::vector<int> X = this->X;
@@ -127,7 +135,7 @@ public:
     }
 };
 
-// Function to calculate the penalization for a given plane's landing time
+// Funcion que calcula y retorna la penalizacion del avion i luego de recibir su landingTime (valor de runway.X[i]), y sus parametros T, g, y h.
 int calculatePenalization(int landingTime, int Ti, int gi, int hi) {
     if (landingTime < Ti) {
         return gi * (Ti - landingTime);
@@ -137,7 +145,9 @@ int calculatePenalization(int landingTime, int Ti, int gi, int hi) {
     }
 }
 
-// Evaluation Function
+// Funcion de evaluacion
+// Recibe una runway y la cantidad total de aviones
+// Calcula la penalizacion total de la secuencia de aterrizaje y la retorna
 int evaluationFunction(const Runway& runway, int p) {
     int totalPenalization = 0;
     for (int i = 0; i < p; i++) {
