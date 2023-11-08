@@ -13,6 +13,10 @@
 
 #include <algorithm>
 
+
+// Funcion main
+// Pide el nombre de uno de los archivos airlandX.txt sobre el cual efectuar Greedy + Tabu-Search
+// Imprime los resultados por pantalla
 int main() {
     // Read input file
     std::string fileName;
