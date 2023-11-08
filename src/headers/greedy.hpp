@@ -56,7 +56,7 @@ void greedyAlgorithm(Runway& runway, int numPlanes) {
                         runway.X[i] = Xi - Sij;
                         separationViolated = false;
                     }
-                    else { // else this means that the separation constraint cannot be respected
+                    else { 
                         runway.X[j] = runway.L[j];
                         separationViolated = false;
                     }
@@ -70,7 +70,7 @@ void greedyAlgorithm(Runway& runway, int numPlanes) {
                         runway.X[j] = Xj - Sij;
                         separationViolated = false;
                     }
-                    else { // else this means that the separation constraint cannot be respected
+                    else { 
                         runway.X[i] = runway.E[i];
                         separationViolated = false;
                     }
