@@ -5,7 +5,9 @@
 #include <limits>
 #include "plane.hpp"
 
-// Greedy algorithm to generate the initial solution
+// Algoritmo greedy para la solucion inicial
+// Recibe objeto tipo Runway (contiene info de todos los aviones a aterrizar) y el numero de aviones
+// Void: No retorna nada, altera el vector X de la runway directamente
 void greedyAlgorithm(Runway& runway, int numPlanes) {
     // Extract T vector from runway object
     std::vector<int> T = runway.T;
