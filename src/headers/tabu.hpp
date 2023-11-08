@@ -5,15 +5,21 @@
 
 int M = 100000;
 
+
+// Clase: TabuSearch
+// Contiene la informacion y funciones requeridas para el algoritmo TabuSearch
 class TabuSearch {
 private:
-    std::vector<std::pair<int, int>> tabuList;
-    std::vector<std::vector<int>> neighbors;
-    size_t tabuTenure;
+    std::vector<std::pair<int, int>> tabuList; // Vector que actua como lista tabu de movimientos 2-opt, representados por los pares de indices se usaron para la operacion
+    std::vector<std::vector<int>> neighbors; // Vector para contener a los vecinos durante la ejecucion de la busqueda
+    size_t tabuTenure; // Largo de la lista tabu
 
 public:
+    // Constructor
     TabuSearch(int tenure) : tabuTenure(tenure) {}
 
+    // Recibe los indices de un movimiento 2-opt y los añade a la lista tabu
+    // Respeta la naturaleza FIFO de la lista
     void addKOptToTabuList(int i, int j) {
         tabuList.push_back(std::make_pair(i, j));
         if (tabuList.size() > tabuTenure) {
@@ -21,16 +27,21 @@ public:
         }
     }
 
+    // Recibe los indices de un movimiento 2-opt, retorna true si el movimiento es tabu, false si no
     bool isKOptTabu(int i, int j) {
         return std::find(tabuList.begin(), tabuList.end(), std::make_pair(i, j)) != tabuList.end();
     }
 
+    // Recibe los indices sobre los cuales efectuar el movimiento 2-opt, retorna el resultado
     std::vector<int> generateKOptNeighbor(const std::vector<int>& solution, int i, int j) {
         std::vector<int> neighbor = solution;
         std::reverse(neighbor.begin() + i, neighbor.begin() + j + 1);
         return neighbor;
     }
 
+    // Recibe un vector de integers que representa la solucion actual
+    // crea su vecindario, y retorna un par conteniendo el vecindario (vector de integers)
+    // y otro par con los indices i y j utilizados para crear cada vecino del vecindario (en el mismo orden que el vector del vecindario)
     std::pair<std::vector<std::vector<int>>, std::vector<std::pair<int, int>>> generateNeighbors(const std::vector<int>& solution) {
         std::vector<std::vector<int>> neighbors;
         std::vector<std::pair<int, int>> kOpts;
@@ -44,7 +55,9 @@ public:
         return std::make_pair(neighbors, kOpts);
     }
 
-    // Function to recalculate the values of a runway. This is used when the runway is modified.
+    // Funcion que recibe un vector solucion (neighbor) ordenado cronologicamente, la runway y la cantidad total de aviones
+    // Void: no retorna nada, pero altera el vector solucion obligando a los tiempos asignados a respetar
+    // las restricciones de rango de tiempo de aterrizaje y separacion entre aviones
     void recalculateNeighbor(std::vector<int>& neighbor, Runway& runway, int p){
         // Check range constraints
         for (int i = 0; i < p; i++){
@@ -91,7 +104,9 @@ public:
         }
     }
 
-    // Your method to generate neighbors, evaluate them and update the best solution
+    // Funcion que efectua la Tabu-Search sobre la runway que recibe, sirviendose del int p conteniendo el total de aviones
+    // y del int maxIterations que indica el numero maximo de iteraciones a generar en esta busqueda
+    // Void: no retorna nada pero afecta el vector X de Runway si es que encuentra una mejor solucion que la que este vector contiene al ser llamada
     void search(Runway& runway, int p, int maxIterations) {
         bool hasImproved = false;
         bool hasInformed = false;
@@ -107,17 +122,6 @@ public:
         bool foundValidKOpt = false; // Flag to check if a valid k-opt has been found
         
         for (int iteration = 0; iteration < maxIterations; iteration++) {
-            /*if (iteration == 0) {
-                std::cout << std::left << std::setw(10) << "Iteration" 
-                        << std::setw(15) << "Current Cost" 
-                        << std::setw(15) << "Best Cost" 
-                        << std::setw(10) << "Neighbor" 
-                        << std::setw(15) << "Neighbor Cost" 
-                        << std::setw(15) << "In Tabu List" 
-                        << std::setw(25) << "Improves Current Solution"
-                        << std::setw(25) << "Improves Best Solution" << std::endl;
-            }*/
-
             bestKOptI = 0; // Reset at the start of each iteration
             bestKOptJ = 0; // Reset at the start of each iteration
             foundValidKOpt = false; // Reset at the start of each iteration
@@ -141,16 +145,6 @@ public:
                 if (improvesBestSolution) {
                     hasImproved = true;
                 }
-
-                // Print table row
-                /*std::cout << std::left << std::setw(10) << iteration 
-                        << std::setw(15) << currentCost 
-                        << std::setw(15) << bestCost 
-                        << std::setw(10) << n 
-                        << std::setw(15) << neighborCost 
-                        << std::setw(15) << std::boolalpha << isInTabuList 
-                        << std::setw(25) << std::boolalpha << improvesCurrentSolution
-                        << std::setw(25) << std::boolalpha << improvesBestSolution << std::endl;*/
 
                 // If the neighbor is better, feasible, and not tabu (or better than the best solution), update the current solution
                 if (!isInTabuList || improvesCurrentSolution) {
