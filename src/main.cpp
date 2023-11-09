@@ -83,7 +83,7 @@ int main() {
     auto start = std::chrono::high_resolution_clock::now();
     int noImprovementLimit = 50*p;
     int iterationsWithoutImprovement = 0;
-    int bestPenalization = INT_MAX;
+    int bestPenalization = evaluationFunction(initialRunway, p);
 
     while (iterationsWithoutImprovement < noImprovementLimit) { // Mientras no se cumpla el limite de iteraciones sin mejora, seguir buscando
         tabu.search(runway, p, p/10);
