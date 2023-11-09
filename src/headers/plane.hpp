@@ -157,4 +157,35 @@ int evaluationFunction(const Runway& runway, int p) {
     return totalPenalization;
 }
 
+void enforceConstraints(Runway& runway) {
+    int numPlanes = runway.X.size();
+
+    // Create a placeholder vector with indices of planes
+    std::vector<int> indices(numPlanes);
+    for (int i = 0; i < numPlanes; i++) {
+        indices[i] = i;
+    }
+
+    // Sort the indices vector by the earliest landing times
+    std::sort(indices.begin(), indices.end(), [&runway](int a, int b) {
+        return runway.E[a] < runway.E[b];
+    });
+
+    // Initialize the landing time of the first plane
+    runway.X[indices[0]] = runway.E[indices[0]];
+
+    // Adjust the landing times of the subsequent planes
+    for (int p = 1; p < numPlanes; p++) {
+        int i = indices[p - 1];
+        int j = indices[p];
+        int Sij = runway.S[i][j];
+        runway.X[j] = std::max(runway.E[j], runway.X[i] + Sij);
+        if (runway.X[j] > runway.L[j]) {
+            // The constraints cannot be satisfied
+            std::cout << "The constraints cannot be satisfied" << std::endl;
+            return;
+        }
+    }
+}
+
 #endif
