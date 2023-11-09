@@ -80,13 +80,12 @@ public:
     
     // Funcion print de debugging
     void print() const {
-        std::cout << std::setw(5) << "Index" << " | "
+        std::cout << std::setw(5) << "i" << " | "
                 << std::setw(5) << "E" << " | "
                 << std::setw(5) << "T" << " | "
                 << std::setw(5) << "L" << " | "
                 << std::setw(5) << "g" << " | "
-                << std::setw(5) << "h" << " | "
-                << std::setw(5) << "S" << std::endl;
+                << std::setw(5) << "h" << std::endl;
 
         for (size_t i = 0; i < E.size(); i++) {
             std::cout << std::setw(5) << i + 1 << " | "
@@ -94,8 +93,14 @@ public:
                     << std::setw(5) << T[i] << " | "
                     << std::setw(5) << L[i] << " | "
                     << std::setw(5) << g[i] << " | "
-                    << std::setw(5) << h[i] << " | ";
+                    << std::setw(5) << h[i] << std::endl;
+        }
 
+        std::cout << std::setw(5) << "i" << " | "
+                << std::setw(5) << "S" << std::endl;
+
+        for (size_t i = 0; i < S.size(); i++) {
+            std::cout << std::setw(5) << i + 1 << " | ";
             for (size_t j = 0; j < S[i].size(); j++) {
                 std::cout << S[i][j] << " ";
             }
