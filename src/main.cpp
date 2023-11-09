@@ -71,10 +71,6 @@ int main() {
     std::cout << "Costo Total: " << evaluationFunction(runway, p) << std::endl;
 
     // Initialize Tabu-Search
-    // Randomize the tabu tenure within a range [minTabuTenure, maxTabuTenure]
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(p*0.4, p*0.6);
     size_t tabuTenure = p/10;
     TabuSearch tabu(tabuTenure);
 
