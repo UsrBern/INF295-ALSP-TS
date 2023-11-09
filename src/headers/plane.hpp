@@ -80,35 +80,27 @@ public:
     
     // Funcion print de debugging
     void print() const {
-        std::cout << "Plane parameters:" << std::endl;
+        std::cout << std::setw(5) << "Index" << " | "
+                << std::setw(5) << "E" << " | "
+                << std::setw(5) << "T" << " | "
+                << std::setw(5) << "L" << " | "
+                << std::setw(5) << "g" << " | "
+                << std::setw(5) << "h" << " | "
+                << std::setw(5) << "S" << std::endl;
+
         for (size_t i = 0; i < E.size(); i++) {
-            std::cout << "E" << i + 1 << ": " << E[i] << " ";
-        }
-        std::cout << std::endl;
-        for (size_t i = 0; i < T.size(); i++) {
-            std::cout << "T" << i + 1 << ": " << T[i] << " ";
-        }
-        std::cout << std::endl;
-        for (size_t i = 0; i < L.size(); i++) {
-            std::cout << "L" << i + 1 << ": " << L[i] << " ";
-        }
-        std::cout << std::endl;
-        for (size_t i = 0; i < g.size(); i++) {
-            std::cout << "g" << i + 1 << ": " << g[i] << " ";
-        }
-        std::cout << std::endl;
-        for (size_t i = 0; i < h.size(); i++) {
-            std::cout << "h" << i + 1 << ": " << h[i] << " ";
-        }
-        std::cout << std::endl;
-        for (size_t i = 0; i < S.size(); i++) {
-            std::cout << "S" << i + 1 << "j: ";
+            std::cout << std::setw(5) << i + 1 << " | "
+                    << std::setw(5) << E[i] << " | "
+                    << std::setw(5) << T[i] << " | "
+                    << std::setw(5) << L[i] << " | "
+                    << std::setw(5) << g[i] << " | "
+                    << std::setw(5) << h[i] << " | ";
+
             for (size_t j = 0; j < S[i].size(); j++) {
                 std::cout << S[i][j] << " ";
             }
             std::cout << std::endl;
         }
-        std::cout << std::endl;
     }
 
     // Funcion print que presenta la secuencia de aterrizaje en tiempo cronologico en forma de tabla vertical
