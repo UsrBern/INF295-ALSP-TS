@@ -134,6 +134,10 @@ public:
                 recalculateNeighbor(neighbor, runway, p);
                 Runway tempR = candidateRunway;
                 tempR.X = neighbor;
+
+                // Enforce the constraints on the neighbor
+                enforceConstraints(tempR);
+
                 int neighborCost = evaluationFunction(tempR, p);
                 bool isInTabuList = isKOptTabu(i, j);
                 improvesBestSolution = neighborCost < bestCost;
