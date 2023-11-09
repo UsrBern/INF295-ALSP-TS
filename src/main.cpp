@@ -71,7 +71,7 @@ int main() {
     std::cout << "Costo Total: " << evaluationFunction(runway, p) << std::endl;
 
     // Initialize Tabu-Search
-    size_t tabuTenure = p/10;
+    size_t tabuTenure = p*0.4;
     TabuSearch tabu(tabuTenure);
 
     // Run Tabu-Search
@@ -82,7 +82,7 @@ int main() {
     int bestPenalization = evaluationFunction(initialRunway, p);
 
     while (iterationsWithoutImprovement < noImprovementLimit) { // Mientras no se cumpla el limite de iteraciones sin mejora, seguir buscando
-        tabu.search(runway, p, p/10);
+        tabu.search(runway, p, p/4  );
         int currentPenalization = evaluationFunction(runway, p);
         if (currentPenalization < bestPenalization) { // Resetear el valor de busquedas sin mejora
             bestPenalization = currentPenalization;

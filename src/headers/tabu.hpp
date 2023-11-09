@@ -131,12 +131,9 @@ public:
                 int i = kOpts[n].first, j = kOpts[n].second;
 
                 // Recalculate neighbor
-                recalculateNeighbor(neighbor, runway, p);
+                enforceConstraints(candidateRunway);
                 Runway tempR = candidateRunway;
                 tempR.X = neighbor;
-
-                // Enforce the constraints on the neighbor
-                enforceConstraints(tempR);
 
                 int neighborCost = evaluationFunction(tempR, p);
                 bool isInTabuList = isKOptTabu(i, j);
@@ -145,6 +142,15 @@ public:
                     hasImproved = true;
                 }
 
+                // Print the debugging information
+                /*std::cout << std::setw(10) << iteration << " | " 
+                        << std::setw(10) << bestCost << " | " 
+                        << std::setw(14) << evaluationFunction(candidateRunway, p) << " | " 
+                        << std::setw(14) << neighborCost << " | " 
+                        << std::setw(5) << std::boolalpha << isInTabuList << " | " 
+                        << std::setw(18) << (neighborCost < evaluationFunction(candidateRunway, p)) << " | " 
+                        << std::setw(14) << improvesBestSolution << std::endl;
+                */
                 // If the neighbor is not tabu and better than the best non-tabu neighbor found so far, update the best non-tabu neighbor
                 if (!isInTabuList && neighborCost < bestNeighborCost) {
                     bestNeighbor = neighbor;
