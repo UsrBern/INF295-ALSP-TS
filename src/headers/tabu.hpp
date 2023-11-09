@@ -118,15 +118,11 @@ public:
 
         // Initialize values
         Runway candidateRunway = bestRunway;
-        size_t bestKOptI = 0, bestKOptJ = 0; // Initialize to 0
-        bool foundValidKOpt = false; // Flag to check if a valid k-opt has been found
-        
         for (int iteration = 0; iteration < maxIterations; iteration++) {
-            bestKOptI = 0; // Reset at the start of each iteration
-            bestKOptJ = 0; // Reset at the start of each iteration
-            foundValidKOpt = false; // Reset at the start of each iteration
-
-            int currentCost = evaluationFunction(runway, p);
+            // Initialize the best non-tabu neighbor and its cost
+            std::vector<int> bestNeighbor;
+            int bestNeighborCost = std::numeric_limits<int>::max();
+            int bestNeighborI = -1, bestNeighborJ = -1;
 
             // Generate neighbors
             auto [neighbors, kOpts] = generateNeighbors(candidateRunway.X);
@@ -140,32 +136,34 @@ public:
                 tempR.X = neighbor;
                 int neighborCost = evaluationFunction(tempR, p);
                 bool isInTabuList = isKOptTabu(i, j);
-                bool improvesCurrentSolution = neighborCost < currentCost;
                 improvesBestSolution = neighborCost < bestCost;
                 if (improvesBestSolution) {
                     hasImproved = true;
                 }
 
-                // If the neighbor is better, feasible, and not tabu (or better than the best solution), update the current solution
-                if (!isInTabuList || improvesCurrentSolution) {
-                    candidateRunway.X = neighbor;
-                    currentCost = neighborCost;
-                    bestKOptI = i;
-                    bestKOptJ = j;
-                    foundValidKOpt = true;
+                // If the neighbor is not tabu and better than the best non-tabu neighbor found so far, update the best non-tabu neighbor
+                if (!isInTabuList && neighborCost < bestNeighborCost) {
+                    bestNeighbor = neighbor;
+                    bestNeighborCost = neighborCost;
+                    bestNeighborI = i;
+                    bestNeighborJ = j;
                 }
 
                 // Update the best solution
                 if (improvesBestSolution) {
-                    bestRunway = candidateRunway;
-                    bestCost = currentCost;
+                    bestRunway = tempR;
+                    bestCost = neighborCost;
                 }
             }
-            
-            // Add the best k-opt to the tabu list
-            if (foundValidKOpt) {
-                addKOptToTabuList(bestKOptI, bestKOptJ);
+
+            // Update the current solution to be the best non-tabu neighbor found
+            if (!bestNeighbor.empty()) {
+                candidateRunway.X = bestNeighbor;
+                addKOptToTabuList(bestNeighborI, bestNeighborJ);
             }
+
+            // Set the best solution found as the solution of the runway
+            runway = bestRunway;
         }
         // Set the best solution found as the solution of the runway
         runway = bestRunway;
