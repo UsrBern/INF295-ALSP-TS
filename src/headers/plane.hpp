@@ -98,7 +98,7 @@ public:
 
         std::cout << std::endl;
         std::cout << std::setw(5) << "i" << " | "
-                << std::setw(5) << "S" << std::endl;
+                << "Sij" << std::endl;
 
         for (size_t i = 0; i < S.size(); i++) {
             std::cout << std::setw(5) << i + 1 << " | ";
