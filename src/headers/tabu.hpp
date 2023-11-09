@@ -161,9 +161,6 @@ public:
                 candidateRunway.X = bestNeighbor;
                 addKOptToTabuList(bestNeighborI, bestNeighborJ);
             }
-
-            // Set the best solution found as the solution of the runway
-            runway = bestRunway;
         }
         // Set the best solution found as the solution of the runway
         runway = bestRunway;
