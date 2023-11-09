@@ -155,6 +155,8 @@ int evaluationFunction(const Runway& runway, int p) {
     return totalPenalization;
 }
 
+// Funcion que aplica las restricciones de separacion y rango
+// Recibe un objeto runway sobre el cual aplicara las restricciones
 void enforceConstraints(Runway& runway) {
     int numPlanes = runway.X.size();
 
