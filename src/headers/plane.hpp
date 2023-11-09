@@ -96,6 +96,7 @@ public:
                     << std::setw(5) << h[i] << std::endl;
         }
 
+        std::cout << std::endl;
         std::cout << std::setw(5) << "i" << " | "
                 << std::setw(5) << "S" << std::endl;
 
