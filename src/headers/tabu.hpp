@@ -55,55 +55,6 @@ public:
         return std::make_pair(neighbors, kOpts);
     }
 
-    // Funcion que recibe un vector solucion (neighbor) ordenado cronologicamente, la runway y la cantidad total de aviones
-    // Void: no retorna nada, pero altera el vector solucion obligando a los tiempos asignados a respetar
-    // las restricciones de rango de tiempo de aterrizaje y separacion entre aviones
-    void recalculateNeighbor(std::vector<int>& neighbor, Runway& runway, int p){
-        // Check range constraints
-        for (int i = 0; i < p; i++){
-            if (neighbor[i] < runway.E[i]){
-                neighbor[i] = runway.E[i];
-            }
-            else if (neighbor[i] > runway.L[i]){
-                neighbor[i] = runway.L[i];
-            }
-        }
-
-        // Check separation constraints
-        std::vector<int> temp = neighbor;
-        std::vector<int> sortedIndices(p);
-        for (int k = 0; k < p; k++) {
-            sortedIndices[k] = k;
-        }
-        std::sort(sortedIndices.begin(), sortedIndices.end(), [&temp](int i1, int i2) {
-            return temp[i1] < temp[i2];
-        });
-        for (int k = 0; k < p; k++) {
-            if (k+1 == p) {
-                break;
-            }
-            size_t i = sortedIndices[k], j = sortedIndices[k+1];
-            if (temp[i] < temp[j] + runway.S[i][j]) {
-                if (runway.h[j] < runway.g[i]){
-                    neighbor[j] = temp[i] + runway.S[i][j];
-                }
-                else {
-                    neighbor[i] = temp[j] - runway.S[i][j];
-                }
-            }
-        }
-
-        // Check range constraints again
-        for (int i = 0; i < p; i++){
-            if (neighbor[i] < runway.E[i]){
-                neighbor[i] = runway.E[i];
-            }
-            else if (neighbor[i] > runway.L[i]){
-                neighbor[i] = runway.L[i];
-            }
-        }
-    }
-
     // Funcion que efectua la Tabu-Search sobre la runway que recibe, sirviendose del int p conteniendo el total de aviones
     // y del int maxIterations que indica el numero maximo de iteraciones a generar en esta busqueda
     // Void: no retorna nada pero afecta el vector X de Runway si es que encuentra una mejor solucion que la que este vector contiene al ser llamada
